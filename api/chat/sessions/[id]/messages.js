@@ -115,14 +115,16 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  const { method, url } = req;
-  const match = url.match(/^\/api\/chat\/sessions\/([^/]+)\/messages$/);
-
-  if (!match || method !== 'POST') {
-    return res.status(404).json({ error: 'Not found' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const sessionId = match[1];
+  const sessionId = req.query.id;
+
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID is required' });
+  }
+
   let session = sessions.get(sessionId);
 
   if (!session) {
