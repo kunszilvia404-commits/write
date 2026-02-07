@@ -9,5 +9,8 @@
   },
   "keywords": ["writing", "ai", "education"],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
 }
