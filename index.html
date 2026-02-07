@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>春节祝福语生成器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', 'Orbitron', sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, #0a0a0f 70%);
+            pointer-events: none;
+        }
+        .container {
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 5px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid #00ffff;
+            box-shadow:
+                0 0 20px rgba(0, 255, 255, 0.3),
+                0 0 40px rgba(255, 0, 255, 0.1),
+                inset 0 0 60px rgba(0, 255, 255, 0.05);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.3;
+            border-radius: 5px;
+        }
+        .title {
+            font-family: 'Orbitron', 'Microsoft YaHei', sans-serif;
+            color: #00ffff;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow:
+                0 0 10px #00ffff,
+                0 0 20px #00ffff,
+                0 0 40px #00ffff;
+            letter-spacing: 3px;
+        }
+        .lanterns {
+            font-size: 3em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px #ff00ff);
+        }
+        .subtitle {
+            color: #ff00ff;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            text-shadow: 0 0 10px #ff00ff;
+            letter-spacing: 2px;
+        }
+        .category-select {
+            margin-bottom: 25px;
+        }
+        .category-select label {
+            display: block;
+            color: #00ffff;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        .category-select select {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: 2px solid #ff00ff;
+            border-radius: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ffff;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            outline: none;
+        }
+        .category-select select:focus {
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+        .category-select select option {
+            background: #0a0a0f;
+            color: #00ffff;
+        }
+        .blessing-box {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00ffff;
+            border-radius: 0;
+            padding: 30px;
+            margin: 25px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow:
+                0 0 15px rgba(0, 255, 255, 0.4),
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+        }
+        .blessing-box::before,
+        .blessing-box::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff00ff;
+        }
+        .blessing-box::before {
+            top: -5px;
+            left: -5px;
+            border-right: none;
+            border-bottom: none;
+        }
+        .blessing-box::after {
+            bottom: -5px;
+            right: -5px;
+            border-left: none;
+            border-top: none;
+        }
+        .blessing-text {
+            color: #fff;
+            font-size: 1.4em;
+            line-height: 1.8;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: 2px solid;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-generate {
+            background: transparent;
+            border-color: #00ffff;
+            color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        .btn-generate:hover {
+            background: #00ffff;
+            color: #0a0a0f;
+            box-shadow:
+                0 0 20px #00ffff,
+                0 0 40px #00ffff;
+        }
+        .btn-copy {
+            background: transparent;
+            border-color: #ff00ff;
+            color: #ff00ff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        .btn-copy:hover {
+            background: #ff00ff;
+            color: #0a0a0f;
+            box-shadow:
+                0 0 20px #ff00ff,
+                0 0 40px #ff00ff;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 255, 0.9);
+            color: #0a0a0f;
+            padding: 15px 30px;
+            border-radius: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+            font-weight: bold;
+        }
+        .toast.show { opacity: 1; }
+        .footer {
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+        }
+        .decorations {
+            position: fixed;
+            font-size: 2em;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px #ff00ff);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .dec-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .dec-2 { top: 20%; right: 8%; animation-delay: 0.5s; }
+        .dec-3 { bottom: 15%; left: 10%; animation-delay: 1s; }
+        .dec-4 { bottom: 25%; right: 5%; animation-delay: 1.5s; }
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+            25% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+            75% { text-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff; }
+        }
+        .title:hover {
+            animation: glitch 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorations dec-1">⚡</div>
+    <div class="decorations dec-2">💠</div>
+    <div class="decorations dec-3">🔮</div>
+    <div class="decorations dec-4">✦</div>
+
+    <div class="container">
+        <div class="lanterns">🐍⚡🐍</div>
+        <h1 class="title">春节祝福语生成器</h1>
+        <p class="subtitle">// CYBER NEW YEAR BLESSING //</p>
+
+        <div class="category-select">
+            <label for="category">选择祝福类型：</label>
+            <select id="category">
+                <option value="general">通用祝福</option>
+                <option value="family">家人祝福</option>
+                <option value="friend">朋友祝福</option>
+                <option value="business">商务祝福</option>
+                <option value="creative">创意祝福</option>
+            </select>
+        </div>
+
+        <div class="blessing-box">
+            <p class="blessing-text" id="blessing">点击下方按钮生成祝福语 ✨</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-generate" onclick="generateBlessing()">⚡ 生成祝福</button>
+            <button class="btn btn-copy" onclick="copyBlessing()">◈ 复制祝福</button>
+        </div>
+
+        <p class="footer">⟨ 蛇年大吉 ⟩ ◈ ⟨ 万事如意 ⟩</p>
+    </div>
+
+    <div class="toast" id="toast">复制成功！</div>
+
+    <script>
+        const blessings = {
+            general: [
+                "新春快乐，万事如意！愿新的一年里，幸福安康，心想事成！",
+                "恭贺新禧，阖家欢乐！愿您在新的一年里，事业有成，财源广进！",
+                "金蛇献瑞，福满人间！祝您新年快乐，好运连连！",
+                "瑞雪兆丰年，新春送祝福！愿您新年大吉，诸事顺遂！",
+                "爆竹声中一岁除，春风送暖入屠苏。祝您新春愉快，阖家幸福！",
+                "新年新气象，新春新希望！愿您在蛇年里，步步高升，前程似锦！",
+                "辞旧迎新，福星高照！祝您新年快乐，身体健康，万事顺意！",
+                "蛇年到，好运到！愿您新的一年里，笑口常开，幸福美满！"
+            ],
+            family: [
+                "亲爱的家人，新年快乐！愿我们的家庭永远幸福美满，和和美美！",
+                "祝爸爸妈妈新年快乐，身体健康，福如东海，寿比南山！",
+                "家和万事兴！祝全家人新年快乐，团团圆圆，幸福安康！",
+                "新春佳节，阖家团圆！愿我们的家庭充满欢声笑语，温馨美满！",
+                "感谢家人一年的陪伴，祝大家新年快乐，健康平安，万事如意！",
+                "亲情是最温暖的港湾，祝我最爱的家人们新年快乐，永远幸福！",
+                "新的一年，愿家人们身体健康，工作顺利，生活美满，天天开心！",
+                "家是最温暖的地方，祝我们的大家庭新年快乐，越来越好！"
+            ],
+            friend: [
+                "老朋友，新年快乐！感谢你一直以来的陪伴，愿我们的友谊长存！",
+                "祝好友新年快乐！愿你在新的一年里，心想事成，万事顺意！",
+                "朋友，新年好！愿你新的一年里，事业有成，爱情甜蜜，生活美满！",
+                "感谢有你这个朋友，祝你新年快乐，好运常伴，幸福永远！",
+                "新年到，祝福到！愿我的好朋友在蛇年里，财源滚滚，好事连连！",
+                "朋友是人生最美的风景，祝你新年快乐，前程似锦，一切顺利！",
+                "新春佳节，送上最真挚的祝福！愿你新年快乐，梦想成真！",
+                "老铁，新年快乐！愿我们的友谊像美酒一样，越陈越香！"
+            ],
+            business: [
+                "恭祝贵公司新年大吉，生意兴隆，财源广进，蒸蒸日上！",
+                "新春佳节，祝您事业有成，步步高升，前程似锦！",
+                "祝合作伙伴新年快乐！愿我们的合作更加紧密，共创辉煌！",
+                "恭贺新禧！祝您在新的一年里，业绩长虹，事业腾飞！",
+                "新年好！感谢您一年来的支持与信任，祝您新年快乐，万事如意！",
+                "蛇年大吉！祝您事业蒸蒸日上，财运亨通，鸿图大展！",
+                "新春送祝福，祝您工作顺利，升职加薪，前途无量！",
+                "恭祝新春！愿您在新的一年里，商海扬帆，再创佳绩！"
+            ],
+            creative: [
+                "蛇年到，福气绕，祝你钱包鼓鼓，烦恼跑跑，快乐天天报到！",
+                "新年愿望：钱多多、事少少、睡到自然醒、数钱数到手抽筋！",
+                "祝你新年：发财发福发大运，有钱有闲有颜值！",
+                "蛇年祝福：愿你像蛇一样灵活，钱财滚滚来，好运挡不住！",
+                "新年快乐！愿你的银行卡永远比体重秤上的数字大！",
+                "祝你新年：工资涨涨涨，体重降降降，颜值高高高！",
+                "蛇年大吉！愿你的生活像WiFi一样满格，烦恼像流量一样用完就没！",
+                "新春祝福：愿你有诗有酒有远方，有钱有闲有对象！"
+            ]
+        };
+
+        function generateBlessing() {
+            const category = document.getElementById('category').value;
+            const categoryBlessings = blessings[category];
+            const randomIndex = Math.floor(Math.random() * categoryBlessings.length);
+            const blessing = categoryBlessings[randomIndex];
+
+            const blessingElement = document.getElementById('blessing');
+            blessingElement.style.opacity = '0';
+
+            setTimeout(() => {
+                blessingElement.textContent = blessing;
+                blessingElement.style.opacity = '1';
+            }, 200);
+        }
+
+        function copyBlessing() {
+            const blessing = document.getElementById('blessing').textContent;
+            if (blessing === '点击下方按钮生成祝福语 ✨') {
+                showToast('请先生成祝福语！');
+                return;
+            }
+
+            navigator.clipboard.writeText(blessing).then(() => {
+                showToast('复制成功！');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = blessing;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('复制成功！');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        document.getElementById('blessing').style.transition = 'opacity 0.2s ease';
+    </script>
+</body>
+</html>
