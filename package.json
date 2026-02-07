@@ -1,0 +1,13 @@
+{
+  "name": "writeway",
+  "version": "1.0.0",
+  "description": "WriteWay - 智能写作辅导平台",
+  "scripts": {
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": ["writing", "ai", "education"],
+  "author": "",
+  "license": "MIT"
+}
